@@ -1,37 +1,34 @@
 # catch-me-up
 
-A Claude Code plugin that gives you a daily (or multi-day) summary of activity across your team's GitHub repos, Slack channels, and Confluence pages.
+A Claude Code command that gives you a daily (or multi-day) summary of activity across your team's GitHub repos, Slack channels, and Confluence pages.
 
 ## What it does
 
 Type `/catch-me-up` and get a structured report covering:
-- **GitHub**: commits, PRs opened/merged/closed, review activity
-- **Slack**: channel summaries with key topics, decisions, and action items
-- **Confluence**: recently modified pages with change details
+- **GitHub**: commits with code change summaries, PRs opened/merged/closed (bot PRs filtered by default)
+- **Slack**: detailed channel summaries with decisions, agreements, action items, and full thread context
+- **Confluence**: page and subpage change summaries with full context of what the page is about
+
+All three sources are fetched **in parallel** using subagents for speed. The output is a single clean report with no intermediate logging.
 
 ## Installation
 
 ```bash
-claude plugin add /path/to/catch-me-up
+git clone https://github.com/ahmedeltaweel/catch-me-up.git
+./catch-me-up/install.sh
 ```
 
-Or if shared via git:
-```bash
-git clone https://github.com/<your-org>/catch-me-up.git
-claude plugin add ./catch-me-up
-```
+This copies the command to `~/.claude/commands/` and creates a config file at `~/.config/catch-me-up/config.yaml`.
+
+Restart Claude Code after installing.
 
 ## Setup
 
-### 1. Create your config file
+### 1. Edit your config file
 
 ```bash
-# Copy the example and customize it
-mkdir -p ~/.config/catch-me-up
-cp /path/to/catch-me-up/catch-me-up.example.yaml ~/.config/catch-me-up/config.yaml
+$EDITOR ~/.config/catch-me-up/config.yaml
 ```
-
-Edit `~/.config/catch-me-up/config.yaml` with your repos, channels, and page IDs.
 
 ### 2. Authenticate GitHub
 
@@ -67,6 +64,8 @@ To find Confluence page IDs: open a page in your browser and look at the URL —
 github:
   repos:
     - org/repo-name
+  # Show Dependabot/Renovate bot PRs and commits (default: false)
+  show_bot_prs: false
 
 slack:
   channels:
@@ -75,6 +74,8 @@ slack:
 confluence:
   page_ids:
     - "12345678"
+  # Recursively include all subpages (default: true)
+  include_subpages: true
 ```
 
 Config file is searched in this order:
@@ -82,11 +83,23 @@ Config file is searched in this order:
 2. `~/.config/catch-me-up/config.yaml` (user global)
 3. `~/.catch-me-up.yaml` (home fallback)
 
+## Features
+
+- **Parallel execution** — GitHub, Slack, and Confluence are fetched concurrently via subagents
+- **Bot filtering** — Dependabot/Renovate PRs and commits excluded by default (`show_bot_prs: false`)
+- **Subpage crawling** — Confluence recursively checks all child pages (`include_subpages: true`)
+- **Commit diff summaries** — Each commit gets a 1-2 sentence summary based on the actual code diff
+- **Thread-aware Slack** — All threads are read fully to capture decisions, agreements, and action items
+- **Silent execution** — No intermediate logging, only the final formatted report
+- **Zero-activity repos hidden** — Repos with no activity after filtering are omitted from the report
+
 ## Troubleshooting
 
 | Problem | Fix |
 |---------|-----|
-| Config not found | Create `catch-me-up.yaml` — see `catch-me-up.example.yaml` |
+| Config not found | Run `install.sh` or create `~/.config/catch-me-up/config.yaml` |
 | GitHub repo 404 | Check repo name and run `gh auth status` |
 | Slack channel not found | Check spelling (no `#` prefix needed) |
-| Confluence errors | Run `acli auth status` and re-login if needed |
+| Slack wrong time window | Verify system date is correct (`date`) |
+| Confluence errors | Run `acli confluence auth login` to re-authenticate |
+| Duplicate repos in config | They are deduplicated automatically |

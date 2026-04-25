@@ -11,6 +11,9 @@ github:
   repos:
     - deliveryhero/pd-fleet-app
     - deliveryhero/dp-applications-api
+  # Show Dependabot/Renovate bot PRs and commits (default: false)
+  # Set to true to include dependency update noise in the report
+  show_bot_prs: false
 
 # Slack channels to summarize (without the # prefix)
 # Requires the Slack MCP plugin to be installed and authenticated
@@ -27,3 +30,5 @@ confluence:
   page_ids:
     - "12345678"
     - "87654321"
+  # Recursively include all subpages of the listed pages (default: true)
+  include_subpages: true
