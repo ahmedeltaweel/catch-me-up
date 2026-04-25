@@ -1,0 +1,10 @@
+{
+  "name": "catch-me-up",
+  "version": "1.0.0",
+  "description": "Daily/multi-day activity summary across GitHub repos, Slack channels, and Confluence pages. Use /catch-me-up to get caught up.",
+  "author": {
+    "name": "Ahmed El Taweel",
+    "email": "taweel.a@outlook.com"
+  },
+  "keywords": ["summary", "standup", "daily", "github", "slack", "confluence", "catch-up"]
+}

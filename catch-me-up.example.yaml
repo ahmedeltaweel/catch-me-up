@@ -1,0 +1,29 @@
+# catch-me-up configuration
+#
+# Copy this file to one of these locations:
+#   ./catch-me-up.yaml                  (project-specific)
+#   ~/.config/catch-me-up/config.yaml   (user global)
+#   ~/.catch-me-up.yaml                 (user home fallback)
+
+# GitHub repositories to monitor (org/repo format)
+# Must be accessible via your authenticated `gh` CLI
+github:
+  repos:
+    - deliveryhero/pd-fleet-app
+    - deliveryhero/dp-applications-api
+
+# Slack channels to summarize (without the # prefix)
+# Requires the Slack MCP plugin to be installed and authenticated
+slack:
+  channels:
+    - team-platform-engineering
+    - deploy-notifications
+    - incidents
+
+# Confluence pages to monitor for changes
+# Requires acli to be installed and authenticated (acli auth login)
+# Use page IDs — you can find them in the page URL or page info
+confluence:
+  page_ids:
+    - "12345678"
+    - "87654321"
